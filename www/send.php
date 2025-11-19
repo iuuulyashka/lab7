@@ -1,7 +1,6 @@
 <?php
 require 'QueueManager.php';
 
-// Получаем имя из GET или POST запроса
 $name = $_POST['name'] ?? $_GET['name'] ?? '';
 
 if (empty($name)) {
@@ -20,7 +19,6 @@ try {
     
     $q->publish($data);
     
-    // Логируем отправку
     file_put_contents('sent_messages.log', json_encode($data) . PHP_EOL, FILE_APPEND);
     
     header('Location: index.php?success=1');

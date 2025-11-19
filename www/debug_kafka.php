@@ -1,0 +1,42 @@
+<?php
+echo "KAFKA DEBUG\n";
+
+// 1. Check extension
+echo "1. rdkafka extension: ";
+if (extension_loaded('rdkafka')) {
+    echo "LOADED\n";
+} else {
+    echo "MISSING\n";
+}
+
+// 2. Check classes
+echo "2. RdKafka classes: ";
+if (class_exists('RdKafka\Conf')) {
+    echo "EXIST\n";
+} else {
+    echo "MISSING\n";
+}
+
+// 3. Test connection
+echo "3. Kafka connection: ";
+try {
+    $conf = new RdKafka\Conf();
+    $conf->set('bootstrap.servers', 'kafka:9092');
+    $conf->set('socket.timeout.ms', '5000');
+    
+    $producer = new RdKafka\Producer($conf);
+    $metadata = $producer->getMetadata(true, null, 5000);
+    
+    $topics = $metadata->getTopics();
+    echo "CONNECTED (" . count($topics) . " topics)\n";
+    
+    foreach ($topics as $topic) {
+        echo "   - " . $topic->getTopic() . "\n";
+    }
+    
+} catch (Exception $e) {
+    echo "ERROR: " . $e->getMessage() . "\n";
+}
+
+echo "4. Memory usage: " . memory_get_usage() . "\n";
+?>
